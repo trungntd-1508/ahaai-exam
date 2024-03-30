@@ -1,0 +1,86 @@
+name: Setting service
+on:
+  push:
+    branches:
+      - staging
+
+env:
+  GITLAB_REGISTRY_URL: registry.gitlab.com/vinaco/ecr/setting-service
+
+jobs:
+  build:
+    name: Build and push docker image to registry
+    runs-on: self-hosted
+    steps:
+      # Checkout the repository to the runner
+      - uses: actions/checkout@v2
+      # Setup Docker buildx for building multi-platform images
+      - name: Set up Docker buildx
+        uses: docker/setup-buildx-action@v1
+
+      # Login to your private registry
+      - name: Login to Private Registry
+        uses: docker/login-action@v1
+        with:
+          registry: registry.gitlab.com
+          username: ${{ secrets.GITLAB_USERNAME }}
+          password: ${{ secrets.GITLAB_PASSWORD }}
+      # Build Docker image and tag with Git commit hash
+      - name: Build and Tag Docker Image
+        run: |
+          docker buildx build -t ${{ env.GITLAB_REGISTRY_URL }}:${{ github.sha }} .
+
+      # Push Docker image to private registry
+      - name: Push Docker Image
+        run: |
+          docker buildx build --push -t ${{ env.GITLAB_REGISTRY_URL }}:${{ github.sha }} .
+  push:
+    name: Deploy the image to server
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      # Deploy Docker image to server
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.STAGING_SERVER_IP }}
+          username: ${{ secrets.STAGING_SERVER_USERNAME }}
+          key: ${{ secrets.STAGING_SSH_PASSPHRASE }}
+          script: |
+            sudo docker pull ${{ env.GITLAB_REGISTRY_URL }}:${{ github.sha }}
+            sudo docker rm -f setting-service 2> /dev/null || true
+            sudo docker run -d --network=vinaco-network \
+              --env-file ~/vinaco/setting-service/.env \
+              --name setting-service ${{ env.GITLAB_REGISTRY_URL }}:${{ github.sha }}
+
+      - name: Send Telegram Notification
+        if: always()
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: |
+          STATUS="${{ job.status }}"
+          COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+          if [ "$STATUS" == "success" ]; then
+            MESSAGE="Deploy ${COMMIT_MESSAGE} setting-service thành công 🎉"
+          else
+            MESSAGE="Deploy ${COMMIT_MESSAGE} setting-service thất bại 😞"
+          fi
+
+          URL="https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
+          curl -s -X POST $URL -d chat_id="-1002037398100" -d text="$MESSAGE"
+  clean:
+    name: Clean the builded image on runner
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      # Clean server backend
+      - name: Clean server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.STAGING_SERVER_IP }}
+          username: ${{ secrets.STAGING_SERVER_USERNAME }}
+          key: ${{ secrets.STAGING_SSH_PASSPHRASE }}
+          script: |
+            echo "y" | sudo docker system prune -a 2> /dev/null || true
