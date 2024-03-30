@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/first */
 require('module-alias/register');
 
@@ -12,7 +13,9 @@ import { morganLogger } from '@middlewares/morgan';
 import routes from '@configs/routes';
 import Settings from '@configs/settings';
 import formidable from 'express-formidable';
+import swaggerUi from 'swagger-ui-express';
 import cronJobs from './jobs';
+import swaggerDocument from './swagger/doc';
 
 const port = process.env.PORT || 3000;
 
@@ -34,7 +37,8 @@ app.options('*', cors());
 app.use(morganLogger());
 app.use(strongParams());
 
-app.use('/api/v1', routes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api', routes);
 
 app.use((req, res) => {
   res.status(404).send({ url: `${req.path} not found` });

@@ -28,6 +28,8 @@
     ],
     "quote-props": "off",
     "import/order": "error",
-    "no-case-declarations": "off"
+    "no-case-declarations": "off",
+    "@typescript-eslint/no-throw-literal": "off",
+    "import/no-extraneous-dependencies": "off"
   }
 }

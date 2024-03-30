@@ -3,8 +3,7 @@ import path from 'path';
 import { Sequelize } from 'sequelize';
 
 const env: any = process.env.NODE_ENV || 'development';
-// eslint-disable-next-line node/no-path-concat
-const config = require(`${__dirname}/../configs/database`)[env];
+const config = require(path.join(__dirname, '..', 'configs', 'database'))[env];
 
 const sequelize = config.use_env_variable
   ? new Sequelize(process.env[config.use_env_variable], config)
