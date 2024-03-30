@@ -45,7 +45,6 @@ app.use((req, res) => {
 });
 
 sequelize.authenticate().then(() => {
-  sequelize.query('SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,\'ONLY_FULL_GROUP_BY\',\'\'));');
   app.listen(port, () => {
     console.log(`App is running localhost:${port}`);
     console.log('  Press CTRL-C to stop\n');
