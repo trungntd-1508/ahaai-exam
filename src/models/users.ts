@@ -5,6 +5,8 @@ import bcrypt from 'bcryptjs';
 import { Model, ModelScopeOptions, ModelValidateOptions, Sequelize, ValidationErrorItem } from 'sequelize';
 import { ModelHooks } from 'sequelize/types/lib/hooks';
 import { getConsoleLogger } from '@libs/consoleLogger';
+import jwt from 'jsonwebtoken';
+import Settings from '@configs/settings';
 
 class UserModel extends Model<UserInterface> implements UserInterface {
   public id: number;
@@ -24,6 +26,10 @@ class UserModel extends Model<UserInterface> implements UserInterface {
   public verificationAt: Date;
 
   public googleUserId: string;
+
+  public lastActiveAt: Date;
+
+  public lastLoginAt: Date;
 
   public createdAt: Date;
 
@@ -74,6 +80,9 @@ class UserModel extends Model<UserInterface> implements UserInterface {
     byId(id) {
       return { where: { id } };
     },
+    byEmail(email) {
+      return { where: { email } };
+    },
     byVerificationCode(code) {
       return { where: { verificationCode: code } };
     },
@@ -87,10 +96,10 @@ class UserModel extends Model<UserInterface> implements UserInterface {
     }
   }
 
-  // public async generateAccessToken() {
-  //   const token = jwt.sign({ id: this.id }, Settings.jwt.userSecret, { expiresIn: Settings.jwt.ttl });
-  //   return token;
-  // }
+  public async generateAccessToken() {
+    const token = jwt.sign({ id: this.id }, Settings.jwt.secret, { expiresIn: Settings.jwt.ttl });
+    return token;
+  }
 
   public async sendVerificationEmail() {
     try {

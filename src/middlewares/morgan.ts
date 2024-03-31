@@ -24,7 +24,7 @@ morgan.token('params', (req: Request) => {
 
     return JSON.stringify(params);
   }
-  return JSON.stringify({ ...req.body, ...req.fields, ...req.files });
+  return JSON.stringify({ ...req.body });
 });
 
 morgan.token('req-headers', (req: Request) => JSON.stringify(req.headers));

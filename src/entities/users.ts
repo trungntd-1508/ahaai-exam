@@ -48,6 +48,12 @@ const UserEntity = {
   googleUserId: {
     type: DataTypes.STRING(50), allowNull: true, unique: true,
   },
+  lastActiveAt: {
+    type: DataTypes.DATE, allowNull: true,
+  },
+  lastLoginAt: {
+    type: DataTypes.DATE, allowNull: true,
+  },
   createdAt: {
     type: DataTypes.DATE,
   },

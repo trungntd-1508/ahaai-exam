@@ -43,9 +43,9 @@ export const BadAuthentication = {
   message: 'Bad authentication data',
 };
 
-export const InvalidOtp = {
+export const InvalidAuthenticationCode = {
   errorCode: 216,
-  message: 'Invalid otp',
+  message: 'Invalid authentication',
 };
 
 export const AccountIsNotVerified = {

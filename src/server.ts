@@ -12,7 +12,6 @@ import strongParams from '@middlewares/parameters';
 import { morganLogger } from '@middlewares/morgan';
 import routes from '@configs/routes';
 import Settings from '@configs/settings';
-import formidable from 'express-formidable';
 import swaggerUi from 'swagger-ui-express';
 import cronJobs from './jobs';
 import swaggerDocument from './swagger/doc';
@@ -21,10 +20,10 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 app.use(compression());
+app.use(express.json());
 app.use(express.urlencoded({
   extended: true,
 }));
-app.use(formidable({ multiples: true }));
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(session({
   resave: true,

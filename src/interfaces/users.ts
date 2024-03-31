@@ -8,6 +8,8 @@ interface UserInterface {
   verificationCode: string;
   verificationAt: Date;
   googleUserId: string;
+  lastActiveAt: Date;
+  lastLoginAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
