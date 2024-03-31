@@ -12,6 +12,9 @@ const swaggerDefinition = {
   basePath: '/api',
   tags: [
     {
+      name: 'CURRENT USER',
+    },
+    {
       name: 'PASSWORD',
     },
     {

@@ -37,6 +37,8 @@ class UserModel extends Model<UserInterface> implements UserInterface {
 
   static readonly CREATABLE_PARAMETERS = ['email', 'password', 'passwordConfirmation', 'fullName'];
 
+  static readonly UPDATABLE_PARAMETERS = ['fullName'];
+
   static readonly hooks: Partial<ModelHooks<UserModel>> = {
     async beforeValidate(record) {
       if (!record.fullName) record.setDataValue('fullName', `User ${Math.floor(100000 + Math.random() * 900000)}`);
