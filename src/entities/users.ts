@@ -39,8 +39,8 @@ const UserEntity = {
   fullName: {
     type: DataTypes.STRING(100), allowNull: true,
   },
-  verificationOtp: {
-    type: DataTypes.STRING(20), allowNull: true, unique: true,
+  verificationCode: {
+    type: DataTypes.STRING(50), allowNull: true, unique: true,
   },
   verificationAt: {
     type: DataTypes.DATE, allowNull: true,

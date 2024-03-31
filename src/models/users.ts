@@ -1,8 +1,10 @@
 import UserEntity from '@entities/users';
 import UserInterface from '@interfaces/users';
+import MailjetService from '@services/mailjet';
 import bcrypt from 'bcryptjs';
 import { Model, ModelScopeOptions, ModelValidateOptions, Sequelize, ValidationErrorItem } from 'sequelize';
 import { ModelHooks } from 'sequelize/types/lib/hooks';
+import { getConsoleLogger } from '@libs/consoleLogger';
 
 class UserModel extends Model<UserInterface> implements UserInterface {
   public id: number;
@@ -17,7 +19,7 @@ class UserModel extends Model<UserInterface> implements UserInterface {
 
   public fullName: string;
 
-  public verificationOtp: string;
+  public verificationCode: string;
 
   public verificationAt: Date;
 
@@ -42,9 +44,9 @@ class UserModel extends Model<UserInterface> implements UserInterface {
         record.password = bcrypt.hashSync(record.password, salt);
       }
     },
-    // afterCreate(record) {
-    //   // record.sendWelcomeNotification();
-    // },
+    afterCreate(record) {
+      record.sendVerificationEmail();
+    },
   };
 
   static readonly validations: ModelValidateOptions = {
@@ -87,10 +89,27 @@ class UserModel extends Model<UserInterface> implements UserInterface {
   //   return token;
   // }
 
-  private generateOtp() {
+  public async sendVerificationEmail() {
+    try {
+      const code = await this.generateVerificationCode();
+      await this.update({ verificationCode: code }, { validate: false });
+      const verificationUrl = `${process.env.VERIFICATION_PATH}?code=${code}`;
+      await MailjetService.send([{ email: this.email, name: this.fullName }] as any, 'accountActivation', { verification_url: verificationUrl }, undefined);
+    } catch (error) {
+      const errorLogger = getConsoleLogger('errorLogging');
+      errorLogger.addContext('requestType', 'CronLogging');
+      errorLogger.error(error);
+    }
+  }
+
+  private async generateVerificationCode() {
     let code = '';
-    const digits = '0123456789';
-    for (let i = 6; i > 0; --i) code += digits[Math.floor(Math.random() * digits.length)];
+    const characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    for (let i = 32; i > 0; --i) code += characters[Math.floor(Math.random() * characters.length)];
+    const existedRecord = await UserModel.findOne({
+      attributes: ['verificationCode'], where: { verificationCode: code },
+    });
+    if (existedRecord) code = await this.generateVerificationCode();
     return code;
   }
 

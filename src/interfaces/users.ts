@@ -5,7 +5,7 @@ interface UserInterface {
   passwordConfirmation?: string;
   unEncryptedPassword?: string;
   fullName: string;
-  verificationOtp: string;
+  verificationCode: string;
   verificationAt: Date;
   googleUserId: string;
   createdAt: Date;
