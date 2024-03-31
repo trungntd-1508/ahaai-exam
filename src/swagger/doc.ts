@@ -12,6 +12,9 @@ const swaggerDefinition = {
   basePath: '/api',
   tags: [
     {
+      name: 'PASSWORD',
+    },
+    {
       name: 'SESSION',
     },
     {
