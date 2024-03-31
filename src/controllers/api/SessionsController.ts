@@ -4,6 +4,7 @@ import UserModel from '@models/users';
 import { Request, Response } from 'express';
 import Settings from '@configs/settings';
 import dayjs from 'dayjs';
+import UserLoginHistoryModel from '@models/userLoginHistories';
 
 class SessionController {
   public async create(req: Request, res: Response) {
@@ -18,6 +19,7 @@ class SessionController {
       const accessToken: string = user.verificationAt ? await user.generateAccessToken() : undefined;
       const tokenExpireAt = accessToken ? dayjs().add(Settings.jwt.ttl, 'seconds') : undefined;
       await user.update({ lastLoginAt: dayjs() });
+      await UserLoginHistoryModel.create({ id: undefined, userId: user.id });
       sendSuccess(res, { accessToken, tokenExpireAt, isVerify: !!user.verificationAt, email });
     } catch (error) {
       sendError(res, 500, error.message, error);

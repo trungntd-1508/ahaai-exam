@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default {
+  defaultPerPage: '12',
   mailjetTemplateMapping: {
     accountActivation: 5835209,
   },

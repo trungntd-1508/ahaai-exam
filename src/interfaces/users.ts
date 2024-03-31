@@ -12,6 +12,8 @@ interface UserInterface {
   lastLoginAt: Date;
   createdAt: Date;
   updatedAt: Date;
+
+  totalOrder?: number;
 }
 
 export default UserInterface;

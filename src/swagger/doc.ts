@@ -24,6 +24,9 @@ const swaggerDefinition = {
       name: 'REGISTRATION',
     },
     {
+      name: 'USER',
+    },
+    {
       name: 'VERIFICATION',
     },
   ],

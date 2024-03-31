@@ -2,11 +2,12 @@ import UserEntity from '@entities/users';
 import UserInterface from '@interfaces/users';
 import MailjetService from '@services/mailjet';
 import bcrypt from 'bcryptjs';
-import { Model, ModelScopeOptions, ModelValidateOptions, Sequelize, ValidationErrorItem } from 'sequelize';
+import { Model, ModelScopeOptions, ModelValidateOptions, Op, Sequelize, ValidationErrorItem } from 'sequelize';
 import { ModelHooks } from 'sequelize/types/lib/hooks';
 import { getConsoleLogger } from '@libs/consoleLogger';
 import jwt from 'jsonwebtoken';
 import Settings from '@configs/settings';
+import UserLoginHistoryModel from './userLoginHistories';
 
 class UserModel extends Model<UserInterface> implements UserInterface {
   public id: number;
@@ -34,6 +35,8 @@ class UserModel extends Model<UserInterface> implements UserInterface {
   public createdAt: Date;
 
   public updatedAt: Date;
+
+  public totalOrder?: number;
 
   static readonly CREATABLE_PARAMETERS = ['email', 'password', 'passwordConfirmation', 'fullName'];
 
@@ -88,6 +91,34 @@ class UserModel extends Model<UserInterface> implements UserInterface {
     byVerificationCode(code) {
       return { where: { verificationCode: code } };
     },
+    bySorting(sortBy, sortOrder) {
+      return {
+        order: [[Sequelize.literal(sortBy), sortOrder]],
+      };
+    },
+    byFreeWord(freeWord) {
+      return {
+        where: {
+          [Op.or]: [
+            { fullName: { [Op.like]: `%${freeWord || ''}%` } },
+            { email: { [Op.like]: `%${freeWord || ''}%` } },
+          ],
+        },
+      };
+    },
+    withTotalLogin() {
+      return {
+        attributes: {
+          include: [
+            [
+              Sequelize.literal(
+                '(SELECT COUNT(\'id\') FROM user_login_histories WHERE user_login_histories.userId = UserModel.id)'),
+              'totalLogin',
+            ],
+          ],
+        },
+      };
+    },
   };
 
   public async validPassword(password: string) {
@@ -138,6 +169,7 @@ class UserModel extends Model<UserInterface> implements UserInterface {
   }
 
   public static associate() {
+    this.hasMany(UserLoginHistoryModel, { as: 'loginHistories', foreignKey: 'userId', hooks: true, onDelete: 'CASCADE' });
   }
 }
 

@@ -21,5 +21,5 @@ export const sendError = (res: Response, code: number, error: any, errorSubject:
     const validationErrorItems = errorSubject.errors.map((errorGroups: any) => errorGroups.errors).map((singleError) => singleError.errors);
     return res.status(422).json({ error: FailValidation(validationErrorItems.flat()) });
   }
-  res.status(code).json({ success: false, ...error });
+  res.status(code).json({ success: false, error });
 };
