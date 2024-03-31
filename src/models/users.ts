@@ -74,6 +74,9 @@ class UserModel extends Model<UserInterface> implements UserInterface {
     byId(id) {
       return { where: { id } };
     },
+    byVerificationCode(code) {
+      return { where: { verificationCode: code } };
+    },
   };
 
   public async validPassword(password: string) {

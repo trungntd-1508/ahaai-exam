@@ -7,7 +7,6 @@ class RegistrationController {
     try {
       const params = req.parameters.permit(UserModel.CREATABLE_PARAMETERS).value();
       const user = await UserModel.create(params);
-      // await user.sendAuthenticateOtp();
       const result: any = user.toJSON();
       ['password', 'passwordConfirmation'].forEach(element => {
         delete result[element];

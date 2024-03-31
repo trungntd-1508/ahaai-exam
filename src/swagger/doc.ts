@@ -14,6 +14,9 @@ const swaggerDefinition = {
     {
       name: 'REGISTRATION',
     },
+    {
+      name: 'VERIFICATION',
+    },
   ],
   securityDefinitions: {
     Bearer: {
