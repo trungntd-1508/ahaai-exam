@@ -28,11 +28,6 @@ export const NoData = {
   message: 'No data available',
 };
 
-export const UnableToInactiveSupplier = {
-  errorCode: 125,
-  message: 'Supplier is currently unable to be inactive.',
-};
-
 export const InternalError = {
   errorCode: 131,
   message: 'Internal error',
@@ -48,43 +43,7 @@ export const InvalidAuthenticationCode = {
   message: 'Invalid authentication',
 };
 
-export const AccountIsNotVerified = {
-  errorCode: 217,
-  message: 'Your account must be verified in order to use this function.',
-};
-
-export const NotEnoughCoin = {
-  errorCode: 220,
-  message: 'Your accumulated coin is not enough.',
-
-};
-
-export const CategoryIsNotEmpty = {
-  errorCode: 300,
-  message: 'Can not delete Category.',
-};
-
-export const MissingImportFile = {
-  errorCode: 301,
-  message: 'Xlsx used for import is missing',
-};
-
-export const FileIsNotSupport = {
-  errorCode: 305,
-  message: 'The file is not in the required format',
-};
-
-export const InvalidVoucher = {
-  errorCode: 350,
-  message: 'Invalid voucher',
-};
-
-export const InvalidShippingAddress = {
-  errorCode: 351,
-  message: 'Invalid shipping address',
-};
-
-export const Forbidden = {
-  errorCode: 418,
-  message: 'Do not have permission',
+export const NewPasswordCannotBeTheSame = {
+  errorCode: 215,
+  message: 'New password cannot be the same as current password',
 };
