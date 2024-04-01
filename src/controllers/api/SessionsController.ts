@@ -26,6 +26,19 @@ class SessionController {
     }
   }
 
+  public async newWithGoogle(req: Request, res: Response) {
+    try {
+      const user = await UserModel.findByPk(req.currentUser.id);
+      const accessToken: string = user.verificationAt ? await user.generateAccessToken() : undefined;
+      const tokenExpireAt = accessToken ? dayjs().add(Settings.jwt.ttl, 'seconds') : undefined;
+      await user.update({ lastLoginAt: dayjs() });
+      await UserLoginHistoryModel.create({ id: undefined, userId: user.id });
+      sendSuccess(res, { accessToken, tokenExpireAt, isVerify: !!user.verificationAt });
+    } catch (error) {
+      sendError(res, 500, error.message, error);
+    }
+  }
+
   public async current(req: Request, res: Response) {
     try {
       const { currentUser } = req;

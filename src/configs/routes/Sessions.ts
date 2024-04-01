@@ -35,6 +35,40 @@ router.post('/login', SessionController.create);
 
 /**
   * @openapi
+  * /sessions/google:
+  *   get:
+  *     tags:
+  *      - "SESSION"
+  *     summary: Login via google
+  *     responses:
+  *       200:
+  *         description: Success.
+  *       500:
+  *         description: Internal errror.
+  *     security:
+  *      - Bearer: []
+  */
+router.get('/google', passport.authenticate('google', { session: false, scope: ['email'] }));
+
+/**
+ * @openapi
+ * /sessions/google/callback:
+ *   get:
+ *     tags:
+ *      - "SESSION"
+ *     summary: Callback google OAuth
+ *     responses:
+ *       200:
+ *         description: Success.
+ *       500:
+ *         description: Internal errror.
+ *     security:
+ *      - Bearer: []
+ */
+router.get('/google/callback', passport.authenticate('google', { session: false, scope: ['email'] }), SessionController.newWithGoogle);
+
+/**
+  * @openapi
   * /sessions/current:
   *   get:
   *     tags:
