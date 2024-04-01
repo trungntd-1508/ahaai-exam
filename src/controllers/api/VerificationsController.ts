@@ -7,6 +7,18 @@ import Settings from '@configs/settings';
 import UserLoginHistoryModel from '@models/userLoginHistories';
 
 class VerificationController {
+  public async create(req: Request, res: Response) {
+    try {
+      const { currentUser } = req;
+      if (!currentUser.verificationAt) {
+        await currentUser.sendVerificationEmail();
+      }
+      sendSuccess(res, { });
+    } catch (error) {
+      sendError(res, 500, error.message, error);
+    }
+  }
+
   public async verify(req: Request, res: Response) {
     try {
       const { code } = req.body;

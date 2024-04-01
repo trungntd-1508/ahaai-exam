@@ -25,7 +25,24 @@ const googleOptions: StrategyOptionsWithRequest = {
   scope: ['id', 'profileUrl', 'emails', 'name', 'photos', 'gender'],
 };
 
-const jwtStrategy = new JwtStrategy(jwtOptions, async (req: Request, payload: { id: number }, next: any) => {
+const verifiedJwtStrategy = new JwtStrategy(jwtOptions, async (req: Request, payload: { id: number }, next: any) => {
+  try {
+    const user = await UserModel.scope([
+      { method: ['byId', payload.id] },
+    ]).findOne();
+    if (user && user.verificationAt) {
+      req.currentUser = user;
+      await user.update({ lastActiveAt: dayjs() });
+      next(null, user);
+    } else {
+      next(null, false);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+const unVerifiedJwtStrategy = new JwtStrategy(jwtOptions, async (req: Request, payload: { id: number }, next: any) => {
   try {
     const user = await UserModel.scope([
       { method: ['byId', payload.id] },
@@ -65,10 +82,13 @@ const googleStrategy = new GoogleStrategy(googleOptions, async (req: Request, ac
 });
 
 const passport = new Passport();
+const unVerifiedPassport = new Passport();
 
-passport.use(jwtStrategy);
+passport.use(verifiedJwtStrategy);
+unVerifiedPassport.use(unVerifiedJwtStrategy);
 passport.use(googleStrategy);
 
 export {
   passport,
+  unVerifiedPassport,
 };

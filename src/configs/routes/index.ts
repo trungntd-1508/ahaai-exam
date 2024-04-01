@@ -17,7 +17,7 @@ router.use('/register', RegistrationRouter);
 router.use('/sessions', SessionRouter);
 router.use('/statistics', passport.authenticate('jwt', { session: false }), StatisticRouter);
 router.use('/users', passport.authenticate('jwt', { session: false }), UserRouter);
-router.use('/verify', VerificationRouter);
+router.use('/verifications', VerificationRouter);
 router.get('/health', (req: Request, res: Response) => {
   sendSuccess(res, { });
 });
