@@ -7,6 +7,7 @@ import { ModelHooks } from 'sequelize/types/lib/hooks';
 import { getConsoleLogger } from '@libs/consoleLogger';
 import jwt from 'jsonwebtoken';
 import Settings from '@configs/settings';
+import dayjs from 'dayjs';
 import UserLoginHistoryModel from './userLoginHistories';
 
 class UserModel extends Model<UserInterface> implements UserInterface {
@@ -104,6 +105,15 @@ class UserModel extends Model<UserInterface> implements UserInterface {
             { email: { [Op.like]: `%${freeWord || ''}%` } },
           ],
         },
+      };
+    },
+    byActiveIn(from, to) {
+      if (!from && !to) return { where: {} };
+      const activeAtCondition: any = {};
+      if (from) Object.assign(activeAtCondition, { [Op.gt]: dayjs(from as string).startOf('day').format() });
+      if (to) Object.assign(activeAtCondition, { [Op.lte]: dayjs(to as string).endOf('day').format() });
+      return {
+        where: { lastActiveAt: activeAtCondition },
       };
     },
     withTotalLogin() {

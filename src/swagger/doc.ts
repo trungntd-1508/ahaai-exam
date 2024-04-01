@@ -21,6 +21,9 @@ const swaggerDefinition = {
       name: 'SESSION',
     },
     {
+      name: 'STATISTIC',
+    },
+    {
       name: 'REGISTRATION',
     },
     {

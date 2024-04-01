@@ -5,6 +5,7 @@ import CurrentUserRouter from './CurrentUsers';
 import PasswordRouter from './Passwords';
 import RegistrationRouter from './Registrations';
 import SessionRouter from './Sessions';
+import StatisticRouter from './Statistics';
 import UserRouter from './Users';
 import VerificationRouter from './Verifications';
 
@@ -14,6 +15,7 @@ router.use('/me', passport.authenticate('jwt', { session: false }), CurrentUserR
 router.use('/passwords', passport.authenticate('jwt', { session: false }), PasswordRouter);
 router.use('/register', RegistrationRouter);
 router.use('/sessions', SessionRouter);
+router.use('/statistics', passport.authenticate('jwt', { session: false }), StatisticRouter);
 router.use('/users', passport.authenticate('jwt', { session: false }), UserRouter);
 router.use('/verify', VerificationRouter);
 router.get('/health', (req: Request, res: Response) => {
