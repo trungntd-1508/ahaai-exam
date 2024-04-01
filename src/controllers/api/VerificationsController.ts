@@ -2,17 +2,21 @@ import { sendError, sendSuccess } from '@libs/response';
 import UserModel from '@models/users';
 import { Request, Response } from 'express';
 import dayjs from 'dayjs';
-import { InvalidAuthenticationCode } from '@libs/errors';
+import { BadAuthentication, InvalidAuthenticationCode } from '@libs/errors';
 import Settings from '@configs/settings';
 import UserLoginHistoryModel from '@models/userLoginHistories';
 
 class VerificationController {
   public async create(req: Request, res: Response) {
     try {
-      const { currentUser } = req;
-      if (!currentUser.verificationAt) {
-        await currentUser.sendVerificationEmail();
+      const { email, password } = req.body;
+      const user = await UserModel.scope([
+        { method: ['byEmail', email] },
+      ]).findOne();
+      if (!user || !(await user.validPassword(password))) {
+        return sendError(res, 404, BadAuthentication);
       }
+      if (!user.verificationAt) user.sendVerificationEmail();
       sendSuccess(res, { });
     } catch (error) {
       sendError(res, 500, error.message, error);

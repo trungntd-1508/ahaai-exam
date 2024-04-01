@@ -16,7 +16,7 @@ class SessionController {
       if (!user || !(await user.validPassword(password))) {
         return sendError(res, 404, BadAuthentication);
       }
-      const accessToken: string = await user.generateAccessToken();
+      const accessToken: string = user.verificationAt ? await user.generateAccessToken() : undefined;
       const tokenExpireAt = accessToken ? dayjs().add(Settings.jwt.ttl, 'seconds') : undefined;
       await user.update({ lastLoginAt: dayjs() });
       await UserLoginHistoryModel.create({ id: undefined, userId: user.id });

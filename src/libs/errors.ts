@@ -40,7 +40,7 @@ export const BadAuthentication = {
 
 export const InvalidAuthenticationCode = {
   errorCode: 216,
-  message: 'Invalid authentication',
+  message: 'Invalid authentication code',
 };
 
 export const NewPasswordCannotBeTheSame = {

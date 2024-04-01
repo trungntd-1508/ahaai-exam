@@ -1,5 +1,4 @@
 import VerificationController from '@controllers/api/VerificationsController';
-import { unVerifiedPassport } from '@middlewares/passport';
 import { Router } from 'express';
 
 const router = Router();
@@ -11,6 +10,18 @@ const router = Router();
  *     tags:
  *      - "VERIFICATION"
  *     summary: Send verification
+ *     parameters:
+ *      - in: "body"
+ *        name: "body"
+ *        schema:
+ *          type: "object"
+ *          properties:
+ *            email:
+ *              type: "string"
+ *              description: "Email"
+ *            password:
+ *              type: "string"
+ *              description: "Password"
  *     responses:
  *       200:
  *         description: Success.
@@ -19,7 +30,7 @@ const router = Router();
  *     security:
  *      - Bearer: []
  */
-router.post('/send', unVerifiedPassport.authenticate('jwt', { session: false }), VerificationController.create);
+router.post('/send', VerificationController.create);
 
 /**
  * @openapi
