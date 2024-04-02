@@ -19,6 +19,8 @@ class UserModel extends Model<UserInterface> implements UserInterface {
 
   public passwordConfirmation?: string;
 
+  public currentPassword?: string;
+
   public unEncryptedPassword?: string;
 
   public fullName: string;
@@ -78,6 +80,12 @@ class UserModel extends Model<UserInterface> implements UserInterface {
       if (!isInputNewPassword && !this.passwordConfirmation) return;
       if (this.password !== this.passwordConfirmation) {
         throw new ValidationErrorItem('Password confirmation is not matched.', 'verifyMatchPassword', 'password', this.passwordConfirmation);
+      }
+    },
+    async verifyNewPassword() {
+      if (!this.currentPassword) return;
+      if (this.currentPassword === this.password) {
+        throw new ValidationErrorItem('New password must not be the same as current password.', 'verifyNewPassword', 'password', this.password);
       }
     },
   };
@@ -145,6 +153,7 @@ class UserModel extends Model<UserInterface> implements UserInterface {
   }
 
   public async sendVerificationEmail() {
+    if (this.verificationAt) return;
     try {
       const code = await this.generateVerificationCode();
       await this.update({ verificationCode: code }, { validate: false });

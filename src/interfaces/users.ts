@@ -3,6 +3,7 @@ interface UserInterface {
   email: string;
   password: string;
   passwordConfirmation?: string;
+  currentPassword?: string;
   unEncryptedPassword?: string;
   fullName: string;
   verificationCode: string;

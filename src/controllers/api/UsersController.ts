@@ -8,7 +8,7 @@ class UserController {
     try {
       const { freeWord } = req.query;
       const page = req.query.page as string || '1';
-      const limit = parseInt(req.query.size as string) || parseInt(Settings.defaultPerPage);
+      const limit = parseInt(req.query.limit as string) || parseInt(Settings.defaultPerPage);
       const offset = (parseInt(page, 10) - 1) * limit;
       const sortBy = req.query.sortBy || 'createdAt';
       const sortOrder = req.query.sortOrder || 'DESC';

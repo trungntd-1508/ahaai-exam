@@ -33,6 +33,9 @@ const UserEntity = {
   passwordConfirmation: {
     type: DataTypes.VIRTUAL, allowNull: true,
   },
+  currentPassword: {
+    type: DataTypes.VIRTUAL, allowNull: true,
+  },
   unEncryptedPassword: {
     type: DataTypes.VIRTUAL,
   },
