@@ -9,3 +9,4 @@ coverage/*
 # custom definition files
 /src/types/
 /src/database/migrations/*.js
+/src/database/seeders/*.js
