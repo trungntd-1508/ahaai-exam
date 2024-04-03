@@ -1,4 +1,7 @@
-# VINACO recruiment service
+# Backend service
+- Prerequisite
+  + Node v18+
+  + Mysql 5.7+
 - Install packages:
   `yarn`
 - Build:
@@ -11,5 +14,7 @@
   `npx sequelize-cli migration:create --name [name]`
 - Run migration:
   `npx sequelize-cli db:migrate`
+- Run seeder:
+  `npx sequelize-cli db:seed:all`
 
 
