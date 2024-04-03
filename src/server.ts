@@ -31,8 +31,14 @@ app.use(session({
   secret: Settings.sessionSecret,
 }));
 
-app.use(cors());
-app.options('*', cors());
+if (process.env.ENV === 'prod') {
+  app.use(cors({
+    origin: process.env.CLIENT_ORIGIN,
+  }));
+} else {
+  app.use(cors());
+  app.options('*', cors());
+}
 app.use(morganLogger());
 app.use(strongParams());
 
