@@ -5,7 +5,7 @@ dotenv.config();
 export default {
   defaultPerPage: '12',
   mailjetTemplateMapping: {
-    accountActivation: 5835209,
+    accountActivation: 5851698,
   },
   jwt: {
     secret: 'jUqnH0tFwdgqX1lLa97OGCFOPMscAGN4IIlx4YaX3vt6ff546IRhCB3qeUz9kYP4',
